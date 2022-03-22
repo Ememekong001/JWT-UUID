@@ -27,7 +27,7 @@ class User extends Authenticatable implements JWTSubject
         'address',
         'phone',
         'password',
-        // 'role'
+        'role_id'
     ];
 
     /**
@@ -59,6 +59,7 @@ class User extends Authenticatable implements JWTSubject
         'email' => $this->email,
         'name' => $this->name,
         'user_id' => $this->user_id,
+        'role_id' => $this->role_id,
         'age' => $this->age,
         'phone' => $this->phone,
         'address' => $this->address,
@@ -68,5 +69,8 @@ class User extends Authenticatable implements JWTSubject
     }
     protected $primaryKey = "user_id";
 
-
+    protected function roles()
+    {
+        return $this->belongsTo(Roles::class);
+    }
 }
