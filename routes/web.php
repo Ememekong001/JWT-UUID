@@ -16,3 +16,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/reset_password/{token}', [AuthController::class, 'getPassword'])->name('getPassword');
