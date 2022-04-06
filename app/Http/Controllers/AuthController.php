@@ -7,6 +7,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Http\Requests\ResetRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -102,31 +103,23 @@ class AuthController extends BaseController
         }
     }
 
-    public function getPassword($token)
-    {
-        return view('auth.reset_password',[ 'token' =>$token]);
-    }
 
-    // public function resetPassword($request)
+    // public function resetPassword(Request $request)
     // {
     //     try {
     //         $newPassword = $request['new_password'];
     //     //Validate the token
-    //         $tokenData = DB::table('password_resets')
-    //             ->where('token', $request['token'])->first();
-    //         if (!$tokenData) return $this->sendError('Token not found', 404);
-
-    //         $user = User::where('email', $tokenData->email)->first();
+    //         $tokenData = DB::table('password_resets')->where('token', $request['token'])->first();
+    //         if (!$tokenData)
+    //         return $this->sendError('Token not found', 404);
     //         //Redirect the user back if the email is invalid
+    //         $user = User::where('email', $tokenData->email)->first();
     //         if (!$user) return $this->sendError('Email not found', 404);
-
-    //         //Hash and update new password
+    //       //Hash and update new password
     //         $user->password = Hash::make($newPassword);
     //         $user->save();
-
     //         //Delete the Token
     //         DB::table('password_resets')->where('email', $user->email)->delete();
-
     //         //Send a password reset success Email
     //         Mail::send('Email.resetPasswordSuccess', [], function ($message) use ($tokenData) {
     //             $message->to($tokenData['email']);

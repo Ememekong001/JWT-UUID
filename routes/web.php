@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthwebController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,4 +17,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/reset_password/{token}', [AuthController::class, 'getPassword'])->name('getPassword');
+Route::get('/reset_password/{token}', [AuthwebController::class, 'getPassword'])->name('getPassword');
