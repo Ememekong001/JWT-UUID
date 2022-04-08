@@ -25,12 +25,12 @@ class RegisterRequest extends FormRequest
     {
         return [
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8',
+            'password' => 'required|min:8|string',
+            'confirm_password' => 'required|same:password',
             'age' => 'required|string',
             'phone' => 'required|min:8|max:12',
             'address' => 'nullable|string',
             'name' => 'required|string',
-            'confirm_password' => 'required|same:password',
         ];
     }
 }

@@ -67,8 +67,12 @@ class AuthController extends BaseController
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function resetPasswordRequest(ResetRequest $request)
+    public function resetPasswordRequest(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email|exists:users',
+        ]);
+
         //checking if email exists on db
         $user = User::where('email', $request['email'])->first();
         if (!$user) {
@@ -104,31 +108,38 @@ class AuthController extends BaseController
     }
 
 
-    // public function resetPassword(Request $request)
-    // {
-    //     try {
-    //         $newPassword = $request['new_password'];
-    //     //Validate the token
-    //         $tokenData = DB::table('password_resets')->where('token', $request['token'])->first();
-    //         if (!$tokenData)
-    //         return $this->sendError('Token not found', 404);
-    //         //Redirect the user back if the email is invalid
-    //         $user = User::where('email', $tokenData->email)->first();
-    //         if (!$user) return $this->sendError('Email not found', 404);
-    //       //Hash and update new password
-    //         $user->password = Hash::make($newPassword);
-    //         $user->save();
-    //         //Delete the Token
-    //         DB::table('password_resets')->where('email', $user->email)->delete();
-    //         //Send a password reset success Email
-    //         Mail::send('Email.resetPasswordSuccess', [], function ($message) use ($tokenData) {
-    //             $message->to($tokenData['email']);
-    //             $message->subject('Reset Password Successful');
-    //             $message->from('admin@example.com');
-    //         });
-    //     } catch (\Exception $e) {
-    //         return $this->sendError($e->getmessage(), 422);
-    //     }
-    // }
+    public function resetPassword(ResetRequest $request)
+    {
+        try {
+            $newPassword = $request['password'];
+            //Validate the token
+            $tokenData = DB::table('password_resets')
+            ->where('token', $request['token'])->first();
+            if (!$tokenData)
+            return $this->sendError('Token not found', 404);
+
+            //Redirect the user back if the email is invalid
+            $user = User::where('email', $tokenData->email)->first();
+            if (!$user) return $this->sendError('Email not found', 404);
+
+            //Hash and update new password
+            $user->password = Hash::make($newPassword);
+            $user->update();
+
+            //Delete the Token because user will not reuse the token.
+            DB::table('password_resets')->where('email', $user->email)->delete();
+
+            //Send a password reset success Email
+            $mail= Mail::send('Email.resetPasswordSuccess', [], function ($message) use ($request) {
+                $message->to($request['email']);
+                $message->subject('Reset Password Successful');
+                $message->from('admin@example.com');
+            });
+            return $this->sendReply($mail, 'Password set successfully. Login to access profile.');
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getmessage(), 422);
+        }
+    }
 }
 
